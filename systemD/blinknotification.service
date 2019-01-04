@@ -1,0 +1,9 @@
+[Unit]
+Description=This will blink my keyboard baklight when we receive notifications.
+
+[Service]
+Type=simple
+ExecStart=/home/castello/systemd/monitor.sh
+
+[Install]
+WantedBy=multi-user.target
