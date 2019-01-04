@@ -6,6 +6,8 @@ if [ "$EUID" -ne 0 ]
 fi
 
 PID=""
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+echo "Running at $DIR"
 
 # monitor the notifications
 su -c "dbus-monitor \"interface='org.freedesktop.Notifications'\"" castello |
@@ -20,7 +22,7 @@ while read LINE; do
 		# set notification
 		if [[ $PID == "" ]]; then
 			echo "set backlight"
-			./blink.sh backlight &
+			$DIR/./blink.sh backlight &
 			PID=$!
 		fi
 	fi
@@ -32,7 +34,7 @@ while read LINE; do
 		if [[ $PID != "" ]]; then
 			echo "turn off backlight"
 			kill $PID
-			./blink.sh backlightoff
+			$DIR/./blink.sh backlightoff
 			PID=""
 		fi
 	fi
