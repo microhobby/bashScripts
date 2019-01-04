@@ -5,6 +5,8 @@ if [ "$EUID" -ne 0 ]
 	exit
 fi
 
+PID=""
+
 # monitor the notifications
 su -c "dbus-monitor \"interface='org.freedesktop.Notifications'\"" castello |
 while read LINE; do
@@ -16,15 +18,22 @@ while read LINE; do
 		echo "new notify"
 
 		# set notification
-		./blink.sh backlight &
-		PID=$!
+		if [[ $PID == "" ]]; then
+			echo "set backlight"
+			./blink.sh backlight &
+			PID=$!
+		fi
 	fi
 
 	if [[ $RET == *"NotificationClosed"* ]]; then
 		echo "notify closed"
 
 		# clear notification
-		kill $PID
-		./blink.sh backlightoff
+		if [[ $PID != "" ]]; then
+			echo "turn off backlight"
+			kill $PID
+			./blink.sh backlightoff
+			PID=""
+		fi
 	fi
 done
